@@ -27,6 +27,17 @@ public class PostsService {
         return postsRepository.findAllByOrderByModifiedAtDesc();
     }
 
+    @Transactional
+    public List<UserInfoMapping> getOneTitlePosts(String title) {
+        return postsRepository.findPostsByTitleIsOrderByModifiedAtDesc(title);
+    }
+
+    @Transactional
+    public List<UserInfoMapping> getOneUsernamePosts(String username) {
+        return postsRepository.findPostsByUsernameIsOrderByModifiedAtDesc(username);
+    }
+
+    @Transactional
     public String update(long id, PostsRequestDto requestDto) {
         Posts posts = postsRepository.findById(id);
         if(!posts.getPassword().equals(requestDto.getPassword())) { //수정된 내용의 비밀번호가 다를경우 수정안됨
@@ -37,6 +48,7 @@ public class PostsService {
         return "수정 성공!";         //entity의 변경사항을 저장하는듯
     }
 
+    @Transactional
     public String deletePosts(long id, String password) {
         Posts posting = postsRepository.findById(id);
         if(!posting.getPassword().equals(password)) {
@@ -44,13 +56,5 @@ public class PostsService {
         }
         postsRepository.deleteById(id);
         return "삭제성공!";
-    }
-
-    public List<UserInfoMapping> getOneTitlePosts(String title) {
-        return postsRepository.findPostsByTitleIsOrderByModifiedAtDesc(title);
-    }
-
-    public List<UserInfoMapping> getOneUsernamePosts(String username) {
-        return postsRepository.findPostsByUsernameIsOrderByModifiedAtDesc(username);
     }
 }
