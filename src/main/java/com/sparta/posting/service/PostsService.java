@@ -1,13 +1,14 @@
 package com.sparta.posting.service;
 
+import com.sparta.posting.dto.PostingDto;
 import com.sparta.posting.dto.PostsRequestDto;
 import com.sparta.posting.entity.Posts;
 import com.sparta.posting.repository.PostsRepository;
-import com.sparta.posting.repository.UserInfoMapping;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,34 +24,53 @@ public class PostsService {
     }
 
     @Transactional
-    public List<UserInfoMapping> getPosts() {   //username, title, contents, 수정된 시간을 리턴
-        return postsRepository.findAllByOrderByModifiedAtDesc();
+    public List<PostingDto> getPosts() {   //username, title, contents, modifiedAt을 리턴
+//        return postsRepository.findAllByOrderByModifiedAtDesc();
+        List<Posts> posts = postsRepository.findAllByOrderByModifiedAtDesc();
+        ArrayList<PostingDto> posting = new ArrayList<>();
+        for(Posts post: posts) {
+            posting.add(new PostingDto(post.getUsername(), post.getTitle(), post.getTitle(), post.getModifiedAt()));
+        }
+        return posting;
     }
 
     @Transactional
-    public List<UserInfoMapping> getOneTitlePosts(String title) {
-        return postsRepository.findPostsByTitleIsOrderByModifiedAtDesc(title);
+    public List<PostingDto> getOneTitlePosts(String title) {
+        List<Posts> posts = postsRepository.findPostsByTitleIsOrderByModifiedAtDesc(title);
+        ArrayList<PostingDto> posting = new ArrayList<>();
+        for(Posts post: posts) {
+            posting.add(new PostingDto(post.getUsername(), post.getTitle(), post.getTitle(), post.getModifiedAt()));
+        }
+        return posting;
     }
 
     @Transactional
-    public List<UserInfoMapping> getOneUsernamePosts(String username) {
-        return postsRepository.findPostsByUsernameIsOrderByModifiedAtDesc(username);
+    public List<PostingDto> getOneUsernamePosts(String username) {
+        List<Posts> posts = postsRepository.findPostsByUsernameIsOrderByModifiedAtDesc(username);
+        ArrayList<PostingDto> posting = new ArrayList<>();
+        for(Posts post: posts) {
+            posting.add(new PostingDto(post.getUsername(), post.getTitle(), post.getTitle(), post.getModifiedAt()));
+        }
+        return posting;
     }
 
     @Transactional
     public String update(long id, PostsRequestDto requestDto) {
-        Posts posts = postsRepository.findById(id);
+        Posts posts = postsRepository.findById(id).orElseThrow(
+                ( ) -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+        );
         if(!posts.getPassword().equals(requestDto.getPassword())) { //수정된 내용의 비밀번호가 다를경우 수정안됨
             return "비밀번호가 다릅니다.";
         }
-        posts.update(requestDto);   //이 줄이 없으면 수정이 안됨
-        postsRepository.flush();    //flush()는 변경사항을 저장하는거인데
-        return "수정 성공!";         //entity의 변경사항을 저장하는듯
+        posts.update(requestDto);
+        return "수정 성공!";
     }
 
     @Transactional
     public String deletePosts(long id, String password) {
-        Posts posting = postsRepository.findById(id);
+        Posts posting = postsRepository.findById(id).orElseThrow(
+                ( ) -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+        );
         if(!posting.getPassword().equals(password)) {
             return "비밀번호가 다릅니다.";
         }
