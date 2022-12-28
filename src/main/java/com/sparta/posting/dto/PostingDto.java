@@ -1,5 +1,6 @@
 package com.sparta.posting.dto;
 
+import com.sparta.posting.entity.Posts;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -12,10 +13,10 @@ public class PostingDto {
 
     private LocalDateTime modifiedAt;
 
-    public PostingDto(String username, String title, String contents, LocalDateTime modifiedAt) {
-        this.username = username;
-        this.title = title;
-        this.contents = contents;
-        this.modifiedAt = modifiedAt;
+    public PostingDto(Posts post) {
+        this.username = post.getUsername();
+        this.title = post.getTitle();
+        this.contents = post.getContents();
+        this.modifiedAt = post.getModifiedAt();
     }
 }
