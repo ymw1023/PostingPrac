@@ -1,6 +1,7 @@
 package com.sparta.posting.service;
 
 import com.sparta.posting.dto.PostingDto;
+import com.sparta.posting.dto.PostsCreateDto;
 import com.sparta.posting.dto.PostsRequestDto;
 import com.sparta.posting.entity.Posts;
 import com.sparta.posting.repository.PostsRepository;
@@ -17,10 +18,10 @@ public class PostsService {
     private final PostsRepository postsRepository;
 
     @Transactional
-    public Posts create(PostsRequestDto requestDto) {
+    public PostsCreateDto create(PostsRequestDto requestDto) {
         Posts posts = new Posts(requestDto);
         postsRepository.save(posts);
-        return posts;
+        return new PostsCreateDto(posts);
     }
 
     @Transactional
@@ -54,7 +55,7 @@ public class PostsService {
     }
 
     @Transactional
-    public String update(long id, String password, PostsRequestDto requestDto) {
+    public String update(Long id, String password, PostsRequestDto requestDto) {
         if(id == -1 || "".equals(password)) {
             return "아이디와 비밀번호를 넘겨주세요!";
         }
@@ -69,7 +70,7 @@ public class PostsService {
     }
 
     @Transactional
-    public String deletePosts(long id, String password) {
+    public String deletePosts(Long id, String password) {
         Posts posting = postsRepository.findById(id).orElseThrow(
                 ( ) -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );

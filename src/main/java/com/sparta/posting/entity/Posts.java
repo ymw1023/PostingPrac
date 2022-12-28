@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class Posts extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     private String username;
