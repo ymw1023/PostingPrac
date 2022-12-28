@@ -20,45 +20,45 @@ public class PostService {
 
     @Transactional
     public PostResponseDto create(PostRequestDto requestDto) {  //게시물 만들기
-        Post Post = new Post(requestDto);
-        postRepository.save(Post);
-        return new PostResponseDto(Post);
+        Post post = new Post(requestDto);
+        postRepository.save(post);
+        return new PostResponseDto(post);
     }
 
     @Transactional
-    public List<GetResponseDto> getPost() {   //게시물 전체 조회하기
-        List<Post> Post = postRepository.findAllByOrderByModifiedAtDesc().orElseThrow(
+    public List<GetResponseDto> find() {   //게시물 전체 조회하기
+        List<Post> post = postRepository.findAllByOrderByModifiedAtDesc().orElseThrow(
                 () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
         );
-        return Post.stream().map(GetResponseDto::new).collect(Collectors.toList());
+        return post.stream().map(GetResponseDto::new).collect(Collectors.toList());
     }
 
     @Transactional
-    public GetResponseDto getPost(Long id) {    //게시물 선택 조회하기
-        Post Post = postRepository.findById(id).orElseThrow(
+    public GetResponseDto findOne(Long id) {    //게시물 선택 조회하기
+        Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        return new GetResponseDto(Post);
+        return new GetResponseDto(post);
     }
 
     @Transactional
     public ResponseMessageDto update(Long id, PostRequestDto requestDto) {   //게시물 수정하기
-        Post Post = postRepository.findById(id).orElseThrow(
+        Post post = postRepository.findById(id).orElseThrow(
                 ( ) -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        if(!Post.getPassword().equals(requestDto.getPassword())) {
+        if(!post.getPassword().equals(requestDto.getPassword())) {
             return new ResponseMessageDto("비밀번호가 다릅니다.");
         }
-        Post.update(requestDto);
+        post.update(requestDto);
         return new ResponseMessageDto("수정 성공!");
     }
 
     @Transactional
-    public ResponseMessageDto deletePost(Long id, String password) {  //게시물 삭제하기
-        Post posting = postRepository.findById(id).orElseThrow(
+    public ResponseMessageDto delete(Long id, String password) {  //게시물 삭제하기
+        Post post = postRepository.findById(id).orElseThrow(
                 ( ) -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        if(!posting.getPassword().equals(password)) {
+        if(!post.getPassword().equals(password)) {
             return new ResponseMessageDto("비밀번호가 다릅니다.");
         }
         postRepository.deleteById(id);

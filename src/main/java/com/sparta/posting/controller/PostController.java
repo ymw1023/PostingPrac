@@ -16,27 +16,27 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/posts")  //게시물추가
-    public PostResponseDto createPost(@RequestBody PostRequestDto requestDto) {
+    public PostResponseDto create(@RequestBody PostRequestDto requestDto) {
         return postService.create(requestDto);
     }
 
     @GetMapping("/posts")   //게시물 전체 조회
-    public List<GetResponseDto> getPost() {
-        return postService.getPost();
+    public List<GetResponseDto> find() {
+        return postService.find();
     }
 
     @GetMapping("/posts/{id}") //게시물 id 로 조회
-    public GetResponseDto getPost(@PathVariable Long id) {
-        return postService.getPost(id);
+    public GetResponseDto findOne(@PathVariable Long id) {
+        return postService.findOne(id);
     }
 
     @PutMapping("/posts/{id}")   //게시물 업데이트
-    public ResponseMessageDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
+    public ResponseMessageDto update(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
         return postService.update(id, requestDto);
     }
 
     @DeleteMapping("/posts/{id}")   //게시물 삭제
-    public ResponseMessageDto deletePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
-        return postService.deletePost(id, requestDto.getPassword());
+    public ResponseMessageDto delete(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
+        return postService.delete(id, requestDto.getPassword());
     }
 }
