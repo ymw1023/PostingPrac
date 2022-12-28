@@ -7,7 +7,6 @@ import com.sparta.posting.service.PostsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,17 +39,11 @@ public class PostsController {
 
     @PutMapping({"/update", "/update?id={id}&password={password}"})   //게시물 ID 로찾아서업데이트, 업데이트시 비밀번호가 다르면 수정안됨
     public Map<String, String> updatePosts(@RequestParam(value = "id", required = true, defaultValue = "-1") Long id, @RequestParam(value = "password", required = true, defaultValue = "") String password, @RequestBody PostsRequestDto requestDto) {
-        Map<String, String> map = new HashMap<>();                                  //id, password 를 입력 안 할시 error 안나고 실패 문구가 리턴되게 수정
-        map.put("message", postsService.update(id, password, requestDto));
-        return map;
-    }   //update 와 delete 가 다르게 생긴이유
-        //update 는 body 에 수정된 정보를 넘겨야 되고
-        //delete 는 body 에 넘길게 따로 없어서
-        //delete 는 body 에 password 를 넣음
+        return postsService.update(id, password, requestDto);               //@RequestParam 을 써서 id 와 password 받고, 수정에 필요한 정보는 @ResponseBody 로 body 에서 받음
+    }                                                                       //id 와 password 의 default 값을 줘서 URI 에 값을 안 넘겨줬을 경우 error 를 안 내고 실패 문구가 나오게 처리
+
     @DeleteMapping("/delete/{id}")   //게시물 id 로 삭제  //검사 하기 위해서 비밀번호를 받음
     public Map<String, String> deletePosts(@PathVariable Long id, @RequestBody PostsRequestDto requestDto) {
-        Map<String, String> map = new HashMap<>();
-        map.put("message", postsService.deletePosts(id, requestDto.getPassword()));
-        return map;
+        return postsService.deletePosts(id, requestDto.getPassword());
     }   //성공 실패 메시지를 JSON 형태로 반환하기 위해 Map 을 씀 - @ResponseBody 가 있어서 가능한듯
 }
