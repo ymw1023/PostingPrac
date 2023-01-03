@@ -1,9 +1,6 @@
 package com.sparta.posting.controller;
 
-import com.sparta.posting.dto.GetResponseDto;
-import com.sparta.posting.dto.PostResponseDto;
-import com.sparta.posting.dto.PostRequestDto;
-import com.sparta.posting.dto.ResponseMessageDto;
+import com.sparta.posting.dto.*;
 import com.sparta.posting.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +19,13 @@ public class PostController {
     }
 
     @GetMapping("/posts")   //게시물 전체 조회
-    public List<GetResponseDto> find(HttpServletRequest request) {
-        return postService.find(request);
+    public List<GetResponseDto> find() {
+        return postService.find();
     }
 
     @GetMapping("/posts/{id}") //게시물 id 로 조회
-    public GetResponseDto findOne(@PathVariable Long id, HttpServletRequest request) {
-        return postService.findOne(id, request);
+    public GetResponseDto findOne(@PathVariable Long id) {
+        return postService.findOne(id);
     }
 
     @PutMapping("/posts/{id}")   //게시물 업데이트
@@ -37,7 +34,7 @@ public class PostController {
     }
 
     @DeleteMapping("/posts/{id}")   //게시물 삭제
-    public ResponseMessageDto delete(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseStatusDto delete(@PathVariable Long id, HttpServletRequest request) {
         return postService.delete(id, request);
     }
 }

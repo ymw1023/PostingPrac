@@ -22,15 +22,16 @@ public class Post extends Timestamped{
     private String contents;
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 
-    public Post(PostRequestDto requestDto) {
-        update(requestDto);
+    public Post(PostRequestDto requestDto, User user) {
+        update(requestDto, user);
     }
 
-    public void update(PostRequestDto requestDto) {
+    public void update(PostRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
+        this.user = user;
     }
 }
