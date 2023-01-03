@@ -12,10 +12,8 @@ import javax.persistence.*;
 public class Post extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "POST_ID")
     private Long id;
-
-    @Column(nullable = false)
-    private String username;
 
     @Column(nullable = false)
     private String title;
@@ -23,17 +21,16 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private String contents;
 
-    @Column(nullable = false)
-    private String password;
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    private User user;
 
     public Post(PostRequestDto requestDto) {
         update(requestDto);
     }
 
     public void update(PostRequestDto requestDto) {
-        this.username = requestDto.getUsername();
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
-        this.password = requestDto.getPassword();
     }
 }

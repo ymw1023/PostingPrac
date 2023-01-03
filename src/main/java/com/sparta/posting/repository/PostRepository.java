@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Optional<List<Post>> findAllByOrderByModifiedAtDesc();
+    Optional<List<Post>> findAllByOrderByCreatedAtDesc();
 }

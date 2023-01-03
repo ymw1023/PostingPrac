@@ -10,12 +10,12 @@ public class GetResponseDto {
     private final String username;
     private final String title;
     private final String contents;
-    private final LocalDateTime modifiedAt;
+    private final LocalDateTime createdAt;
 
     public GetResponseDto(Post post) {
-        this.username = post.getUsername();
+        this.username = post.getUser().getUsername();
         this.title = post.getTitle();
         this.contents = post.getContents();
-        this.modifiedAt = post.getModifiedAt();
+        this.createdAt = post.getModifiedAt();
     }
 }
