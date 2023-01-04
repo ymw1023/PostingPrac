@@ -104,6 +104,8 @@ public class PostService {
     @Transactional
     public ResponseStatusDto delete(Long id, HttpServletRequest request) {  //게시물 삭제하기
 
+        System.out.println("PostService.delete2");
+
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -122,6 +124,8 @@ public class PostService {
             }
             User user = userRepository.findByUsername(claims.getSubject()).get();
 
+            System.out.println("PostService.delete3");
+
 
             if (postRepository.findById(id).isEmpty()) {
                 return new ResponseStatusDto("아이디가 존재하지 않습니다", HttpStatus.NOT_FOUND);
@@ -129,11 +133,16 @@ public class PostService {
             Post post = postRepository.findById(id).get();
 
 
+            System.out.println("PostService.delete3");
+
             // 로그인한 유저의 비밀번호와 게시글 작성자의 비밀번호를 비교
             if(!post.getUser().getUsername().equals(user.getUsername())) {
                 return new ResponseStatusDto("본인이 작성한 게시글만 삭제 가능합니다.", HttpStatus.UNAUTHORIZED);
             }
+
+            System.out.println("PostService.delete5");
             postRepository.deleteById(id);
+            System.out.println("PostService.delete6");
             return new ResponseStatusDto("삭제 성공!", HttpStatus.OK);
         }
         return null;

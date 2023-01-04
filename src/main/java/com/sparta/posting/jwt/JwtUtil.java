@@ -24,7 +24,7 @@ public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long TOKEN_TIME = 1 * 60 * 1000L;
+    private static final long TOKEN_TIME = 10 * 60 * 1000L;
 
     @Value("${jwt.secret.key}")
     private String secretKey;

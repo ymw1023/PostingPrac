@@ -35,6 +35,7 @@ public class PostController {
 
     @DeleteMapping("/posts/{id}")   //게시물 삭제
     public ResponseStatusDto delete(@PathVariable Long id, HttpServletRequest request) {
+        System.out.println("PostController.delete1");
         return postService.delete(id, request);
     }
 }

@@ -11,19 +11,19 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Chat extends Timestamped{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CHAT_ID")
-    Long id;
+    private Long id;
 
     @Column(nullable = false)
     private String comments;
 
     @ManyToOne
-    @JoinColumn(name = "POST_ID", nullable = false)
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Chat(ChatRequestDto requestDto, Post post, User user) {

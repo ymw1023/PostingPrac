@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class ChatRequestDto {
-    private Long PostId;
+    private Long id;
     private String comments;
 }
