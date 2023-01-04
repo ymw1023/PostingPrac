@@ -10,7 +10,6 @@ import com.sparta.posting.jwt.JwtUtil;
 import com.sparta.posting.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;

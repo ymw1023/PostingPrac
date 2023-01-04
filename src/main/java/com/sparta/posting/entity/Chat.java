@@ -19,7 +19,7 @@ public class Chat extends Timestamped{
     private String comments;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id")
     private Post post;
 
     @ManyToOne

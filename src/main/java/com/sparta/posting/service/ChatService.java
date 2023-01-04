@@ -26,9 +26,7 @@ public class ChatService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public ChatResponseDto create(ChatRequestDto requestDto, HttpServletRequest request) {
-
-        System.out.println("ChatService.create1");
+    public Object create(ChatRequestDto requestDto, HttpServletRequest request) {
 
         String token = jwtUtil.resolveToken(request);
         Claims claims;
@@ -40,32 +38,31 @@ public class ChatService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                return new ResponseStatusDto("Token Error", HttpStatus.BAD_REQUEST);
             }
 
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다")
-            );
+            if(userRepository.findByUsername(claims.getSubject()).isEmpty()) {
+                return new ResponseStatusDto("사용자가 존재하지 않습니다", HttpStatus.BAD_REQUEST);
+            }
+            User user = userRepository.findByUsername(claims.getSubject()).get();
 
-            System.out.println("ChatService.create2");
 
-            Post post = postRepository.findById(requestDto.getId()).orElseThrow(
-                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
-            );
+            if( postRepository.findById(requestDto.getId()).isEmpty()) {
+                return new ResponseStatusDto("게시물이 존재하지 않습니다", HttpStatus.BAD_REQUEST);
+            }
+            Post post = postRepository.findById(requestDto.getId()).get();
 
-            System.out.println("ChatService.create3");
 
             Chat chat = new Chat(requestDto, post, user);
-            System.out.println("ChatService.create4");
 
             chatRepository.save(chat);
             return new ChatResponseDto(chat);
         }
-        return null;
+        return new ResponseStatusDto("Token Error", HttpStatus.BAD_REQUEST);
     }
 
     @Transactional
-    public ResponseMessageDto update(Long id, ChatRequestDto requestDto, HttpServletRequest request) {
+    public ResponseStatusDto update(Long id, ChatRequestDto requestDto, HttpServletRequest request) {
 
         String token = jwtUtil.resolveToken(request);
         Claims claims;
@@ -77,25 +74,29 @@ public class ChatService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                return new ResponseStatusDto("Token Error", HttpStatus.BAD_REQUEST);
             }
 
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다")
-            );
+            if(userRepository.findByUsername(claims.getSubject()).isEmpty()) {
+                return new ResponseStatusDto("사용자가 존재하지 않습니다", HttpStatus.BAD_REQUEST);
+            }
+            User user = userRepository.findByUsername(claims.getSubject()).get();
 
-            Chat chat = chatRepository.findById(id).orElseThrow(
-                    ( ) -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-            );
+
+            if(chatRepository.findById(id).isEmpty()) {
+                return new ResponseStatusDto("아이디가 존재하지 않습니다", HttpStatus.BAD_REQUEST);
+            }
+            Chat chat = chatRepository.findById(id).get();
+
 
             // 로그인한 유저의 비밀번호와 게시글 작성자의 비밀번호를 비교
             if(!(chat.getUser().getUsername().equals(user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN))) {
-                return new ResponseMessageDto("본인이 작성한 댓글만 수정 가능합니다.");
+                return new ResponseStatusDto("본인이 작성한 댓글만 수정 가능합니다.", HttpStatus.BAD_REQUEST);
             }
             chat.update(requestDto, user);
-            return new ResponseMessageDto("수정 성공!");
+            return new ResponseStatusDto("수정 성공!", HttpStatus.OK);
         }
-        return null;
+        return new ResponseStatusDto("Token Error",HttpStatus.BAD_REQUEST);
     }
 
     @Transactional
@@ -133,6 +134,6 @@ public class ChatService {
             postRepository.deleteById(id);
             return new ResponseStatusDto("삭제 성공!", HttpStatus.OK);
         }
-        return null;
+        return new ResponseStatusDto("Token Error", HttpStatus.UNAUTHORIZED);
     }
 }

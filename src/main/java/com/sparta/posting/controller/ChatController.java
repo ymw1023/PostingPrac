@@ -16,12 +16,12 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping("/chats")
-    public ChatResponseDto create(@RequestBody ChatRequestDto requestDto, HttpServletRequest request) {
+    public Object create(@RequestBody ChatRequestDto requestDto, HttpServletRequest request) {
         return chatService.create(requestDto, request);
     }
 
     @PutMapping("/chats/{id}")
-    public ResponseMessageDto update(@PathVariable Long id, @RequestBody ChatRequestDto requestDto, HttpServletRequest request) {
+    public ResponseStatusDto update(@PathVariable Long id, @RequestBody ChatRequestDto requestDto, HttpServletRequest request) {
         return chatService.update(id, requestDto, request);
     }
 
