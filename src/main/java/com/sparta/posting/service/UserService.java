@@ -1,7 +1,6 @@
 package com.sparta.posting.service;
 
 import com.sparta.posting.dto.LoginRequestDto;
-import com.sparta.posting.dto.ResponseMessageDto;
 import com.sparta.posting.dto.ResponseStatusDto;
 import com.sparta.posting.dto.SignupRequestDto;
 import com.sparta.posting.entity.User;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
@@ -41,8 +39,8 @@ public class UserService {
             return new ResponseStatusDto("비밀번호는 8자 이상, 15자 이하이고 알파벳과 숫자로만 이루어져 있으며, 한개 이상의 알파벳과 숫자, 특수문자가 있어야 합니다!", HttpStatus.BAD_REQUEST);
         }
 
-        Optional<User> found = userRepository.findByUsername(username);
-        if(found.isPresent()) {
+        User found = userRepository.findByUsername(username);
+        if(found != null) {
             return new ResponseStatusDto("중복된 username 존재합니다", HttpStatus.BAD_REQUEST);
         }
 
@@ -65,11 +63,10 @@ public class UserService {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
-        if(userRepository.findByUsername(username).isEmpty()){
+        if(userRepository.findByUsername(username) == null){
             return new ResponseStatusDto("회원을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
-
-        User user = userRepository.findByUsername(username).get();
+        User user = userRepository.findByUsername(username);
 
         if (!user.getPassword().equals(password)) {
             return new ResponseStatusDto("회원을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);

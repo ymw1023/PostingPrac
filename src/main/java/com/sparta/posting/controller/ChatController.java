@@ -1,8 +1,7 @@
 package com.sparta.posting.controller;
 
 import com.sparta.posting.dto.ChatRequestDto;
-import com.sparta.posting.dto.ChatResponseDto;
-import com.sparta.posting.dto.ResponseMessageDto;
+import com.sparta.posting.dto.ChatStatusDto;
 import com.sparta.posting.dto.ResponseStatusDto;
 import com.sparta.posting.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -16,17 +15,17 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping("/chats")
-    public Object create(@RequestBody ChatRequestDto requestDto, HttpServletRequest request) {
+    public ChatStatusDto create(@RequestBody ChatRequestDto requestDto, HttpServletRequest request) {
         return chatService.create(requestDto, request);
     }
 
-    @PutMapping("/chats/{id}")
-    public ResponseStatusDto update(@PathVariable Long id, @RequestBody ChatRequestDto requestDto, HttpServletRequest request) {
-        return chatService.update(id, requestDto, request);
+    @PutMapping("/chats")
+    public ResponseStatusDto update(@RequestBody ChatRequestDto requestDto, HttpServletRequest request) {
+        return chatService.update(requestDto, request);
     }
 
-    @DeleteMapping("/chats/{id}")
-    public ResponseStatusDto delete(@PathVariable Long id, HttpServletRequest request) {
-        return chatService.delete(id, request);
+    @DeleteMapping("/chats")
+    public ResponseStatusDto delete(@RequestBody ChatRequestDto requestDto, HttpServletRequest request) {
+        return chatService.delete(requestDto, request);
     }
 }

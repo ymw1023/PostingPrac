@@ -13,17 +13,17 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/posts")  //게시물추가
-    public Object create(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+    public PostStatusDto create(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
         return postService.create(requestDto, request);
     }
 
     @GetMapping("/posts")   //게시물 전체 조회
-    public Object find() {
+    public PostAndChatStatusDto find() {
         return postService.find();
     }
 
     @GetMapping("/posts/{id}") //게시물 id 로 조회
-    public Object findOne(@PathVariable Long id) {
+    public PostChatStatusDto findOne(@PathVariable Long id) {
         return postService.findOne(id);
     }
 

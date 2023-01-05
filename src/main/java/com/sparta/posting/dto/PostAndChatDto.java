@@ -13,7 +13,7 @@ public class PostAndChatDto {
     private final String title;
     private final String contents;
     private final LocalDateTime createdAt;
-    private List<ChatResponseDto> chats = new ArrayList<>();
+    private final List<ChatResponseDto> chats = new ArrayList<>();
 
     public PostAndChatDto(Post post, List<ChatResponseDto> chats) {
         this.username = post.getUser().getUsername();

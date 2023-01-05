@@ -27,7 +27,7 @@ public class PostService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public Object create(PostRequestDto requestDto, HttpServletRequest request) {  //게시물 만들기
+    public PostStatusDto create(PostRequestDto requestDto, HttpServletRequest request) {  //게시물 만들기
 
         String token = jwtUtil.resolveToken(request);
         Claims claims;
@@ -39,38 +39,38 @@ public class PostService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                return new ResponseStatusDto("Token Error", HttpStatus.BAD_REQUEST);
+                return new PostStatusDto("Token Error", HttpStatus.BAD_REQUEST, null);
             }
 
-            if (userRepository.findByUsername(claims.getSubject()).isEmpty()) {
-                return new ResponseStatusDto("사용자가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+            if (userRepository.findByUsername(claims.getSubject()) == null) {
+                return new PostStatusDto("사용자가 존재하지 않습니다.", HttpStatus.BAD_REQUEST, null);
             }
-            User user = userRepository.findByUsername(claims.getSubject()).get();
+            User user = userRepository.findByUsername(claims.getSubject());
 
 
             Post post = new Post(requestDto, user);
             postRepository.save(post);
-            return new PostResponseDto(post);
+            return new PostStatusDto("Success", HttpStatus.OK, new PostResponseDto(post));
         }
-        return new ResponseStatusDto("Token Error", HttpStatus.BAD_REQUEST);
+        return new PostStatusDto("Token Error", HttpStatus.BAD_REQUEST, null);
     }
 
     @Transactional
-    public Object find() {   //게시물 전체 조회하기
+    public PostAndChatStatusDto find() {   //게시물 전체 조회하기
 
-        if(postRepository.findAllByOrderByCreatedAtDesc().isEmpty()) {
-            return new ResponseStatusDto("게시물이 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+        if(postRepository.findAllByOrderByCreatedAtDesc() == null) {
+            return new PostAndChatStatusDto("게시물이 존재하지 않습니다.", HttpStatus.BAD_REQUEST, null);
         }
-        List<Post> post = postRepository.findAllByOrderByCreatedAtDesc().get();
+        List<Post> post = postRepository.findAllByOrderByCreatedAtDesc();
 
 
         List<PostAndChatDto> responseDto = new ArrayList<>();
         post.forEach(posting -> {
-            List<Chat> chats = chatRepository.findByPost_IdOrderByCreatedAtDesc(posting.getId()).get();
-            if (chats.isEmpty()) {
+            if (chatRepository.findByPost_IdOrderByCreatedAtDesc(posting.getId()) == null) {
                 responseDto.add(new PostAndChatDto(posting, null));
                 return;
             }
+            List<Chat> chats = chatRepository.findByPost_IdOrderByCreatedAtDesc(posting.getId());
 
             List<ChatResponseDto> chatting = new ArrayList<>();
 
@@ -81,22 +81,22 @@ public class PostService {
             responseDto.add(new PostAndChatDto(posting, chatting));
         });
 
-        return responseDto;
+        return new PostAndChatStatusDto("Success", HttpStatus.OK, responseDto);
     }
 
     @Transactional
-    public Object findOne(Long id) {    //게시물 선택 조회하기
+    public PostChatStatusDto findOne(Long id) {    //게시물 선택 조회하기
 
         if(postRepository.findById(id).isEmpty()) {
-            return new ResponseStatusDto("선택한 게시물이 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+            return new PostChatStatusDto("선택한 게시물이 존재하지 않습니다.", HttpStatus.BAD_REQUEST, null);
         }
         Post post = postRepository.findById(id).get();
 
 
-        if(chatRepository.findByPost_IdOrderByCreatedAtDesc(post.getId()).get().isEmpty()) {
-            return new PostAndChatDto(post, null);
+        if(chatRepository.findByPost_IdOrderByCreatedAtDesc(post.getId()) == null) {
+            return new PostChatStatusDto("Success", HttpStatus.OK, new PostAndChatDto(post, null));
         }
-        List<Chat> chats = chatRepository.findByPost_IdOrderByCreatedAtDesc(post.getId()).get();
+        List<Chat> chats = chatRepository.findByPost_IdOrderByCreatedAtDesc(post.getId());
 
 
         List<ChatResponseDto> chatting = new ArrayList<>();
@@ -105,7 +105,7 @@ public class PostService {
             chatting.add(new ChatResponseDto(chat));
         }
 
-        return new PostAndChatDto(post, chatting);
+        return new PostChatStatusDto("Success", HttpStatus.OK, new PostAndChatDto(post, chatting));
     }
 
     @Transactional
@@ -124,10 +124,10 @@ public class PostService {
                 return new ResponseStatusDto("Token Error", HttpStatus.BAD_REQUEST);
             }
 
-            if (userRepository.findByUsername(claims.getSubject()).isEmpty()) {
+            if (userRepository.findByUsername(claims.getSubject()) == null) {
                 return new ResponseStatusDto("사용자가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
             }
-            User user = userRepository.findByUsername(claims.getSubject()).get();
+            User user = userRepository.findByUsername(claims.getSubject());
 
 
             if (postRepository.findById(id).isEmpty()) {
@@ -161,10 +161,10 @@ public class PostService {
             claims = jwtUtil.getUserInfoFromToken(token);
 
 
-            if (userRepository.findByUsername(claims.getSubject()).isEmpty()) {
+            User user = userRepository.findByUsername(claims.getSubject());
+            if (user == null) {
                 return new ResponseStatusDto("사용자가 존재하지 않습니다", HttpStatus.BAD_REQUEST);
             }
-            User user = userRepository.findByUsername(claims.getSubject()).get();
 
 
             if (postRepository.findById(id).isEmpty()) {
@@ -178,9 +178,8 @@ public class PostService {
                 return new ResponseStatusDto("본인이 작성한 게시글만 삭제 가능합니다.", HttpStatus.BAD_REQUEST);
             }
 
-            System.out.println("PostService.delete5");
             postRepository.deleteById(id);
-            System.out.println("PostService.delete6");
+
             return new ResponseStatusDto("삭제 성공!", HttpStatus.OK);
         }
         return new ResponseStatusDto("Token Error", HttpStatus.BAD_REQUEST);

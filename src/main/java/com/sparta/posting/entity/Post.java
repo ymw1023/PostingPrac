@@ -28,7 +28,7 @@ public class Post extends Timestamped{
     private User user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Chat> chat = new ArrayList<>();
+    private final List<Chat> chat = new ArrayList<>();
 
     public Post(PostRequestDto requestDto, User user) {
         update(requestDto, user);

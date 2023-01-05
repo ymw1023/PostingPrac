@@ -28,10 +28,10 @@ public class User {
     private UserRoleEnum role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Post> post = new ArrayList<>();
+    private final List<Post> post = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Chat> chat = new ArrayList<>();
+    private final List<Chat> chat = new ArrayList<>();
 
     public User(String username, String password, UserRoleEnum role) {
         this.username = username;

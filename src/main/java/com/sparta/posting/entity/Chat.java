@@ -32,8 +32,7 @@ public class Chat extends Timestamped{
         this.user = user;
     }
 
-    public void update(ChatRequestDto requestDto, User user) {
+    public void update(ChatRequestDto requestDto) {
         this.comments = requestDto.getComments();
-        this.user = user;
     }
 }
