@@ -13,9 +13,9 @@ public class PostAndChatDto {
     private final String title;
     private final String contents;
     private final LocalDateTime createdAt;
-    private final List<ChatResponseDto> chats = new ArrayList<>();
+    private final List<CommentDto> chats = new ArrayList<>();
 
-    public PostAndChatDto(Post post, List<ChatResponseDto> chats) {
+    public PostAndChatDto(Post post, List<CommentDto> chats) {
         this.username = post.getUser().getUsername();
         this.title = post.getTitle();
         this.contents = post.getContents();

@@ -72,10 +72,10 @@ public class PostService {
             }
             List<Chat> chats = chatRepository.findByPost_IdOrderByCreatedAtDesc(posting.getId());
 
-            List<ChatResponseDto> chatting = new ArrayList<>();
+            List<CommentDto> chatting = new ArrayList<>();
 
             for(Chat chat: chats) {
-                chatting.add(new ChatResponseDto(chat));
+                chatting.add(new CommentDto(chat.getComments()));
             }
 
             responseDto.add(new PostAndChatDto(posting, chatting));
@@ -99,10 +99,10 @@ public class PostService {
         List<Chat> chats = chatRepository.findByPost_IdOrderByCreatedAtDesc(post.getId());
 
 
-        List<ChatResponseDto> chatting = new ArrayList<>();
+        List<CommentDto> chatting = new ArrayList<>();
 
         for(Chat chat: chats) {
-            chatting.add(new ChatResponseDto(chat));
+            chatting.add(new CommentDto(chat.getComments()));
         }
 
         return new PostChatStatusDto("Success", HttpStatus.OK, new PostAndChatDto(post, chatting));
