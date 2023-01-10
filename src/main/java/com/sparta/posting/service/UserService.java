@@ -9,10 +9,12 @@ import com.sparta.posting.jwt.JwtUtil;
 import com.sparta.posting.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
@@ -21,11 +23,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
+
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
     public ResponseStatusDto signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
+        //저장하기 전에 인코딩
         String password = signupRequestDto.getPassword();
 
         String checkUsername = "^[A-Za-z\\d]{4,10}$";
@@ -35,8 +40,10 @@ public class UserService {
             return new ResponseStatusDto("4자 이상, 10자 이하의 알파벳과 숫자만 있어야 합니다!", HttpStatus.BAD_REQUEST);
         }
         if(!Pattern.matches(checkPassword, password)) {
-            return new ResponseStatusDto("비밀번호는 8자 이상, 15자 이하이고 알파벳과 숫자로만 이루어져 있으며, 한개 이상의 알파벳과 숫자, 특수문자가 있어야 합니다!", HttpStatus.BAD_REQUEST);
+            return new ResponseStatusDto("비밀번호는 8자 이상, 15자 이하이고 알파벳과 숫자, 특수문자가 모두 들어가야 합니다", HttpStatus.BAD_REQUEST);
         }
+
+        password = passwordEncoder.encode(password);
 
         User found = userRepository.findByUsername(username);
         if(found != null) {
@@ -67,7 +74,8 @@ public class UserService {
         }
         User user = userRepository.findByUsername(username);
 
-        if (!user.getPassword().equals(password)) {
+        //비교할 때 인코딩 값과 비교하기
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             return new ResponseStatusDto("회원을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
 

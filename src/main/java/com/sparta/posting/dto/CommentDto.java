@@ -7,8 +7,10 @@ import lombok.Setter;
 @Setter
 public class CommentDto {
     private final String comment;
+    private final Long likeCount;
 
-    public CommentDto(String comment) {
+    public CommentDto(String comment, Long likeCount) {
         this.comment = comment;
+        this.likeCount = likeCount;
     }
 }

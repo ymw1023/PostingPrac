@@ -15,9 +15,6 @@ public class Chat extends Timestamped{
     @Column(name = "CHAT_ID")
     private Long id;
 
-    @Column(nullable = false)
-    private String comments;
-
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
@@ -26,10 +23,21 @@ public class Chat extends Timestamped{
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
+    private String comments;
+
+    @Column(nullable = false)
+    private Long likeCount;
+
     public Chat(ChatRequestDto requestDto, Post post, User user) {
         this.comments = requestDto.getComments();
         this.post = post;
         this.user = user;
+        this.likeCount = 0L;
+    }
+
+    public void like(Long like) {
+        this.likeCount += like;
     }
 
     public void update(ChatRequestDto requestDto) {

@@ -17,12 +17,6 @@ public class Post extends Timestamped{
     @Column
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
-    private String contents;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -30,8 +24,22 @@ public class Post extends Timestamped{
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private final List<Chat> chat = new ArrayList<>();
 
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
+    private String contents;
+
+    @Column(nullable = false)
+    private Long likeCount;     //like 는 예약어 인듯
+
     public Post(PostRequestDto requestDto, User user) {
         update(requestDto, user);
+        this.likeCount = 0L;
+    }
+
+    public void like(Long like) {
+        this.likeCount += like;
     }
 
     public void update(PostRequestDto requestDto, User user) {

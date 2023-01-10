@@ -14,12 +14,14 @@ public class PostAndChatDto {
     private final String contents;
     private final LocalDateTime createdAt;
     private final List<CommentDto> chats = new ArrayList<>();
+    private final Long likeCount;
 
     public PostAndChatDto(Post post, List<CommentDto> chats) {
         this.username = post.getUser().getUsername();
         this.title = post.getTitle();
         this.contents = post.getContents();
         this.createdAt = post.getCreatedAt();
+        this.likeCount = post.getLikeCount();
 
         this.chats.addAll(chats);
     }

@@ -1,12 +1,16 @@
 package com.sparta.posting.jwt;
 
 import com.sparta.posting.entity.UserRoleEnum;
+import com.sparta.posting.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -21,10 +25,12 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtUtil {
 
+    private final UserDetailsServiceImpl userDetailsService;
+
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long TOKEN_TIME = 10 * 60 * 1000L;
+    private static final long TOKEN_TIME = 30 * 60 * 1000L;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -61,24 +67,28 @@ public class JwtUtil {
     }
 
     // 토큰 검증
-    public boolean validateToken(String token) {
+    public String validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            return "success";
         } catch (SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+            return "Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.";
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token, 만료된 JWT token 입니다.");
+            return "Expired JWT token, 만료된 JWT token 입니다.";
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+            return "Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.";
         } catch (IllegalArgumentException e) {
-            log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+            return "JWT claims is empty, 잘못된 JWT 토큰 입니다.";
         }
-        return false;
     }
 
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
+
+    public Authentication createAuthentication(String username) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);  //유저와 유저 이름이 들어 있는 dto 반환
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }                                               //사용자 식별 정보, 주로 비밀번호 등 사용자 인증에 사용, 사용자에게 부여한 권한
 }
