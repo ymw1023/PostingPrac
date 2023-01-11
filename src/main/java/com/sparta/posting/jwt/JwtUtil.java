@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -87,8 +88,8 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
-    public Authentication createAuthentication(String username) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);  //유저와 유저 이름이 들어 있는 dto 반환
+    public Authentication createAuthentication(String username, HttpServletResponse response) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username, response);  //유저와 유저 이름이 들어 있는 dto 반환
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }                                               //사용자 식별 정보, 주로 비밀번호 등 사용자 인증에 사용, 사용자에게 부여한 권한
 }

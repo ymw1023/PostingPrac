@@ -13,14 +13,16 @@ public class LikeChat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long chatId;
+    @ManyToOne
+    @JoinColumn(name = "chat_id", nullable = false)
+    private Chat chat;
 
-    @Column(nullable = false)
-    private String username;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    public LikeChat(Long chatId, String username) {
-        this.chatId = chatId;
-        this.username = username;
+    public LikeChat(Chat chat, User user) {
+        this.chat = chat;
+        this.user = user;
     }
 }

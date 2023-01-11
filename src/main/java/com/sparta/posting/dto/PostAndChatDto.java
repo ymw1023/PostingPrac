@@ -13,8 +13,8 @@ public class PostAndChatDto {
     private final String title;
     private final String contents;
     private final LocalDateTime createdAt;
-    private final List<CommentDto> chats = new ArrayList<>();
     private final Long likeCount;
+    private final List<CommentDto> chats = new ArrayList<>();
 
     public PostAndChatDto(Post post, List<CommentDto> chats) {
         this.username = post.getUser().getUsername();

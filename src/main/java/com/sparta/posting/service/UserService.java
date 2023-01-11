@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
@@ -30,7 +29,6 @@ public class UserService {
     @Transactional
     public ResponseStatusDto signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
-        //저장하기 전에 인코딩
         String password = signupRequestDto.getPassword();
 
         String checkUsername = "^[A-Za-z\\d]{4,10}$";
@@ -42,11 +40,11 @@ public class UserService {
         if(!Pattern.matches(checkPassword, password)) {
             return new ResponseStatusDto("비밀번호는 8자 이상, 15자 이하이고 알파벳과 숫자, 특수문자가 모두 들어가야 합니다", HttpStatus.BAD_REQUEST);
         }
-
+        //저장하기 전에 인코딩
         password = passwordEncoder.encode(password);
 
-        User found = userRepository.findByUsername(username);
-        if(found != null) {
+
+        if(userRepository.findByUsername(username).isPresent()) {
             return new ResponseStatusDto("중복된 username 존재합니다", HttpStatus.BAD_REQUEST);
         }
 
@@ -69,14 +67,14 @@ public class UserService {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
-        if(userRepository.findByUsername(username) == null){
-            return new ResponseStatusDto("회원을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
-        }
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
+        );
+
 
         //비교할 때 인코딩 값과 비교하기
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            return new ResponseStatusDto("회원을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseStatusDto("비밀번호가 다릅니다!", HttpStatus.BAD_REQUEST);
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));

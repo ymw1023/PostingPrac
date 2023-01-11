@@ -13,14 +13,16 @@ public class LikePost { //이 테이블은 유저 쪽에서 좋아요한 포스�
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;  //외래키를 사용한 인덱스
 
-    @Column(nullable = false)
-    private String username;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    public LikePost(Long postId, String username) {
-        this.postId = postId;
-        this.username = username;
+    public LikePost(Post post, User user) {
+        this.post = post;
+        this.user = user;
     }
 }
