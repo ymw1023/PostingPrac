@@ -34,7 +34,7 @@ public class Post extends Timestamped{
     private String contents;
 
     @Column(nullable = false)
-    private Long likeCount;     //like 는 예약어 인듯
+    private Long likeCount;
 
     public Post(PostRequestDto requestDto, User user) {
         update(requestDto, user);

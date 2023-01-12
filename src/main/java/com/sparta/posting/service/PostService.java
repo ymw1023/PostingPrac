@@ -63,15 +63,13 @@ public class PostService {
 
         Post post = checkPost(id, response);
 
-        List<CommentDto> chatting = new ArrayList<>();
+        List<CommentDto> chatting = new ArrayList<>();  //비어잇는 댓글 리스트
 
-        if(chatRepository.findByPost_IdOrderByCreatedAtDesc(post.getId()).isEmpty()) {
-            return new PostChatStatusDto("Success", HttpStatus.OK, new PostAndChatDto(post, chatting));
-        }                               //error 안내고 댓글 비우기
-        List<Chat> chats = chatRepository.findByPost_IdOrderByCreatedAtDesc(post.getId()).orElseThrow();
-
-        for(Chat chat: chats) {
-            chatting.add(new CommentDto(chat.getComments(), chat.getLikeCount()));
+        if(chatRepository.findByPost_IdOrderByCreatedAtDesc(post.getId()).isPresent()) {    //댓글이 있으면 리스트에 추가
+            List<Chat> chats = chatRepository.findByPost_IdOrderByCreatedAtDesc(post.getId()).get();
+            for(Chat chat: chats) {
+                chatting.add(new CommentDto(chat.getComments(), chat.getLikeCount()));
+            }
         }
 
         return new PostChatStatusDto("Success", HttpStatus.OK, new PostAndChatDto(post, chatting));

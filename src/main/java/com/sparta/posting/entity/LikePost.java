@@ -17,7 +17,7 @@ public class LikePost { //이 테이블은 유저 쪽에서 좋아요한 포스�
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;  //외래키를 사용한 인덱스
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
